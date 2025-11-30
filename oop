@@ -1,0 +1,222 @@
+// ===========================================================
+// Konsep OOP Lengkap: Motor
+// ===========================================================
+
+// 1. Abstraction (kelas abstrak)
+class Kendaraan {
+    constructor(merk, tahun) {
+        if (this.constructor === Kendaraan) {
+            throw new Error("Kelas 'Kendaraan' bersifat abstrak dan tidak bisa diinstansiasi langsung!");
+        }
+        this._merk = merk;
+        this._tahun = tahun;
+    }
+
+    // Abstrak method (harus dioverride)
+    nyalakan() {
+        throw new Error("Method 'nyalakan()' harus dioverride oleh subclass!");
+    }
+}
+
+// 2. Encapsulation (private field & getter-setter)
+class Motor extends Kendaraan {
+    #kecepatan;
+
+    constructor(merk, tahun, tipe) {
+        super(merk, tahun);
+        this.tipe = tipe;
+        this.#kecepatan = 0;
+        this.mesin = new Mesin("Bensin", 150); // Composition
+    }
+
+    // Getter & Setter
+    get kecepatan() {
+        return this.#kecepatan;
+    }
+
+    set kecepatan(value) {
+        if (value < 0) {
+            console.log("❌ Kecepatan tidak boleh negatif!");
+        } else {
+            this.#kecepatan = value;
+        }
+    }
+
+    // Overriding method abstrak
+    nyalakan() {
+        console.log(Motor ${this._merk} (${this.tipe}) dinyalakan...);
+    }
+
+    gas() {
+        this.kecepatan += 10;
+        console.log(Motor ${this._merk} menambah kecepatan menjadi ${this.kecepatan} km/jam);
+    }
+
+    // Polymorphism
+    suaraMesin() {
+        console.log("Brmmm... suara mesin umum");
+    }
+
+    // Static method
+    static info() {
+        console.log("Kelas Motor digunakan untuk merepresentasikan kendaraan roda dua bermesin.");
+    }
+}
+
+// 3. Inheritance + Overriding
+class MotorSport extends Motor {
+    constructor(merk, tahun, tipe, modeBalap) {
+        super(merk, tahun, tipe);
+        this.modeBalap = modeBalap;
+    }
+
+    suaraMesin() {
+        console.log("VROOOMMM!!! Suara mesin sport bertenaga tinggi!");
+    }
+
+    gas() {
+        this.kecepatan += 20;
+        console.log(Motor Sport ${this._merk} melesat ${this.kecepatan} km/jam!);
+    }
+}
+
+// 4. Composition (Motor memiliki Mesin)
+class Mesin {
+    constructor(jenis, tenaga) {
+        this.jenis = jenis;
+        this.tenaga = tenaga;
+    }
+
+    nyalakanMesin() {
+        console.log(Mesin ${this.jenis} ${this.tenaga}cc dinyalakan...);
+    }
+}
+
+// ============================
+// Penggunaan
+// ============================
+const motor1 = new Motor("Honda", 2021, "Matic");
+motor1.nyalakan();
+motor1.mesin.nyalakanMesin();
+motor1.gas();
+motor1.suaraMesin();
+motor1.kecepatan = -10; // uji validasi setter
+
+const sport = new MotorSport("Yamaha", 2023, "Sport", true);
+sport.nyalakan();
+sport.mesin.nyalakanMesin();
+sport.gas();
+sport.suaraMesin();
+
+// Static method
+Motor.info();
+
+// =====================================================
+// Konsep: Polymorphism, Static, Getter & Setter
+// =====================================================
+class MotorDasar {
+    constructor(merk, tipe) {
+        this._merk = merk;
+        this._tipe = tipe;
+        this._kecepatan = 0;
+    }
+
+    get kecepatan() {
+        return this._kecepatan;
+    }
+
+    set kecepatan(value) {
+        if (value < 0) console.log("❌ Kecepatan tidak boleh negatif!");
+        else this._kecepatan = value;
+    }
+
+    gas() {
+        this.kecepatan += 10;
+        console.log(${this._merk} melaju ${this.kecepatan} km/jam);
+    }
+
+    suaraMesin() {
+        console.log("Brmmm... suara mesin standar");
+    }
+
+    static info() {
+        console.log("Kelas MotorDasar mewakili kendaraan roda dua umum.");
+    }
+}
+
+// Subclass dengan Polymorphism
+class MotorMatic extends MotorDasar {
+    suaraMesin() {
+        console.log("Ngenggg... suara halus khas motor matic!");
+    }
+}
+
+class MotorSportKhusus extends MotorDasar {
+    suaraMesin() {
+        console.log("VROOOMMM!!! Suara keras khas motor sport!");
+    }
+}
+
+// Penggunaan
+const m1 = new MotorDasar("Honda", "Bebek");
+const m2 = new MotorMatic("Yamaha", "Matic");
+const m3 = new MotorSportKhusus("Kawasaki", "Sport");
+
+m1.suaraMesin();
+m2.suaraMesin();
+m3.suaraMesin();
+
+m1.kecepatan = 40;
+console.log("Kecepatan:", m1.kecepatan);
+
+MotorDasar.info();
+
+// =====================================================
+// Konsep: Abstraction dan Composition
+// =====================================================
+class KendaraanAbstrak {
+    constructor(merk) {
+        if (this.constructor === KendaraanAbstrak) {
+            throw new Error("❌ Tidak bisa buat instance dari kelas abstrak!");
+        }
+        this._merk = merk;
+    }
+
+    nyalakan() {
+        throw new Error("Method 'nyalakan()' harus diimplementasikan oleh subclass!");
+    }
+}
+
+// Composition: kelas Mesin dimiliki oleh Motor
+class MesinMotor {
+    constructor(jenis, tenaga) {
+        this.jenis = jenis;
+        this.tenaga = tenaga;
+    }
+
+    hidupkan() {
+        console.log(🔧 Mesin ${this.jenis} ${this.tenaga}cc menyala...);
+    }
+}
+
+// Subclass yang mengimplementasikan Abstraction
+class MotorAbstrak extends KendaraanAbstrak {
+    constructor(merk, jenisMesin, tenagaMesin) {
+        super(merk);
+        this.mesin = new MesinMotor(jenisMesin, tenagaMesin);
+    }
+
+    nyalakan() {
+        console.log(🏍 Motor ${this._merk} dinyalakan...);
+        this.mesin.hidupkan();
+    }
+
+    gas() {
+        console.log(${this._merk} mulai melaju 🚀);
+    }
+}
+
+// Penggunaan
+const motorA = new MotorAbstrak("Yamaha", "Bensin", 155);
+motorA.nyalakan();
+motorA.gas();
